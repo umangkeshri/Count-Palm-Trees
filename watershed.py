@@ -73,8 +73,6 @@ if __name__ == "__main__":
     args = vars(ap.parse_args())
 
     image, num_labels = main(args["image"])
-    print(
-        "[INFO] {} unique segments found".format(num_labels)
-    )
+    print("[INFO] {} unique segments found".format(num_labels))
     cv2.imshow("Output", image)
     cv2.waitKey(0)
