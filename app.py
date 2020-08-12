@@ -1,9 +1,12 @@
 import os
 import tempfile
 
-from watershed import count_trees
-from flask import Flask, request, jsonify
+import cv2
+from flask import Flask, request, jsonify, send_file
 from werkzeug.utils import secure_filename
+
+from watershed import count_trees
+
 
 
 app = Flask(__name__)
@@ -26,9 +29,9 @@ def test():
 
 @app.route("/countPalmTrees", methods=["POST"])
 def countPalmTrees():
-    if "image" not in request.files:
+    if "file" not in request.files:
         return jsonify({"message": "No file part in the request"}), 400
-    image = request.files["image"]
+    image = request.files["file"]
     if image.filename == "":
         return jsonify({"message": "No file selected for uploading"}), 400
     if image and allowed_file(image.filename):
@@ -36,7 +39,12 @@ def countPalmTrees():
         with tempfile.TemporaryDirectory() as tmpdirname:
             img_path = os.path.join(tmpdirname, filename)
             image.save(img_path)
-            _, label_cnt = count_trees(img_path)
+            tagged_img, label_cnt = count_trees(img_path)
+            if 'image' in request.form.to_dict():
+                if request.form.to_dict()['image'].lower() == 'yes':
+                    op_path = os.path.join(tmpdirname, 'output.png')
+                    cv2.imwrite(op_path, tagged_img)                    
+                    return send_file(op_path)
             return jsonify({"tree_count": label_cnt}), 200
     else:
         return (
@@ -46,4 +54,4 @@ def countPalmTrees():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8360)
+    app.run(host="0.0.0.0", port=8360, debug=True)
