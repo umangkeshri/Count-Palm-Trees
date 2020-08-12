@@ -27,7 +27,7 @@ jobs:
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
-        repository: myorg/myrepository
+        repository: umangkeshri/count_trees
         tags: latest
 
     # Runs a single command using the runners shell
