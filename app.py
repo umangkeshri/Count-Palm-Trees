@@ -8,7 +8,6 @@ from werkzeug.utils import secure_filename
 from watershed import count_trees
 
 
-
 app = Flask(__name__)
 
 
@@ -40,10 +39,10 @@ def countPalmTrees():
             img_path = os.path.join(tmpdirname, filename)
             image.save(img_path)
             tagged_img, label_cnt = count_trees(img_path)
-            if 'image' in request.form.to_dict():
-                if request.form.to_dict()['image'].lower() == 'yes':
-                    op_path = os.path.join(tmpdirname, 'output.png')
-                    cv2.imwrite(op_path, tagged_img)                    
+            if "image" in request.form.to_dict():
+                if request.form.to_dict()["image"].lower() == "yes":
+                    op_path = os.path.join(tmpdirname, "output.png")
+                    cv2.imwrite(op_path, tagged_img)
                     return send_file(op_path)
             return jsonify({"tree_count": label_cnt}), 200
     else:
